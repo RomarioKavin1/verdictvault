@@ -1,5 +1,5 @@
-import { AlchemyAccountsUIConfig, createConfig } from "@account-kit/react";
 import { baseSepolia } from "@account-kit/infra";
+import { AlchemyAccountsUIConfig, createConfig } from "@account-kit/react";
 import { QueryClient } from "@tanstack/react-query";
 
 const uiConfig: AlchemyAccountsUIConfig = {
