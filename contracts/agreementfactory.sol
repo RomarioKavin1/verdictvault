@@ -1,114 +1,127 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 
-contract EscrowContract {
-    enum State { Created, Attested, Disputed, Resolved }
-    enum DisputeDecision { None, ClientWins, FreelancerWins }
+contract FreelanceContract {
+    address public client;
+    address public freelancer;
+    uint256 public amount;
+    string public terms;
+    uint256 public deadline;
+    bool public fundsReleased;
+    bool public inDispute;
+    mapping(address => bytes32) public arbitratorAttestations;
+    address[] public arbitrators;
+    uint256 public arbitratorCount;
 
-    struct Contract {
-        address client;
-        address freelancer;
-        uint256 amount;
-        string terms;
-        uint256 deadline;
-        address[] arbitrators;
-        State state;
-        address attestor;
-        uint256 attestationUID;
-        DisputeDecision disputeDecision;
-    }
+    event WorkCompleted();
+    event DisputeRaised();
+    event DisputeResolved(string resolution);
 
-    mapping(uint256 => Contract) public contracts;
-    uint256 public contractCount;
-    
-    // Events
-    event ContractCreated(uint256 contractId, address client, address freelancer, uint256 amount, string terms, uint256 deadline);
-    event ContractAttested(uint256 contractId, address freelancer, uint256 attestationUID);
-    event DisputeRaised(uint256 contractId);
-    event DisputeResolved(uint256 contractId, DisputeDecision decision);
-    
-    // Modifiers
-    modifier onlyClient(uint256 contractId) {
-        require(msg.sender == contracts[contractId].client, "Not the client");
+    modifier onlyClient() {
+        require(msg.sender == client, "Only client can call this function");
         _;
     }
 
-    modifier onlyFreelancer(uint256 contractId) {
-        require(msg.sender == contracts[contractId].freelancer, "Not the freelancer");
+    modifier onlyFreelancerOrClient() {
+        require(msg.sender == freelancer || msg.sender == client, "Only freelancer or client can call this function");
         _;
     }
 
-    modifier onlyArbitrator(uint256 contractId) {
+    modifier onlyArbitrators() {
+        require(inDispute, "Contract is not in dispute");
         bool isArbitrator = false;
-        for (uint i = 0; i < contracts[contractId].arbitrators.length; i++) {
-            if (msg.sender == contracts[contractId].arbitrators[i]) {
+        for (uint256 i = 0; i < arbitrators.length; i++) {
+            if (msg.sender == arbitrators[i]) {
                 isArbitrator = true;
                 break;
             }
         }
-        require(isArbitrator, "Not an arbitrator");
+        require(isArbitrator, "Only arbitrators can call this function");
         _;
     }
 
-    // Create a new contract
-    function createContract(address _freelancer, uint256 _amount, string calldata _terms, uint256 _deadline, address[] calldata _arbitrators) external payable {
-        require(msg.value == _amount, "Incorrect escrow amount");
-        require(_deadline > block.timestamp, "Deadline must be in the future");
-        
-        contractCount++;
-        contracts[contractCount] = Contract({
-            client: msg.sender,
-            freelancer: _freelancer,
-            amount: _amount,
-            terms: _terms,
-            deadline: _deadline,
-            arbitrators: _arbitrators,
-            state: State.Created,
-            attestor: address(0),
-            attestationUID: 0,
-            disputeDecision: DisputeDecision.None
-        });
-
-        emit ContractCreated(contractCount, msg.sender, _freelancer, _amount, _terms, _deadline);
+    constructor(
+        address _client,
+        address _freelancer,
+        uint256 _amount,
+        string memory _terms,
+        uint256 _deadline,
+        address[] memory _arbitrators
+    ) payable {
+        require(msg.value == _amount, "Insufficient amount sent");
+        client = _client;
+        freelancer = _freelancer;
+        amount = _amount;
+        terms = _terms;
+        deadline = _deadline;
+        arbitrators = _arbitrators;
+        arbitratorCount = _arbitrators.length;
     }
 
-    // Freelancer attests the contract
-    function attestContract(uint256 contractId, uint256 attestationUID) external onlyFreelancer(contractId) {
-        Contract storage _contract = contracts[contractId];
-        require(_contract.state == State.Created, "Contract not in attestation stage");
-        
-        _contract.attestor = msg.sender;
-        _contract.attestationUID = attestationUID;
-        _contract.state = State.Attested;
-
-        emit ContractAttested(contractId, msg.sender, attestationUID);
+    function workCompleted() external onlyClient {
+        require(!fundsReleased, "Funds already released");
+        require(!inDispute, "Contract is in dispute");
+        fundsReleased = true;
+        payable(freelancer).transfer(amount);
+        emit WorkCompleted();
     }
 
-    // Raise a dispute
-    function raiseDispute(uint256 contractId) external {
-        Contract storage _contract = contracts[contractId];
-        require(msg.sender == _contract.client || msg.sender == _contract.freelancer, "Not a participant");
-        require(_contract.state == State.Attested, "Contract not attested");
-        
-        _contract.state = State.Disputed;
-
-        emit DisputeRaised(contractId);
+    function raiseDispute() external onlyFreelancerOrClient {
+        require(!inDispute, "Dispute already raised");
+        inDispute = true;
+        emit DisputeRaised();
     }
 
-    // Arbitrator resolves the dispute
-    function resolveDispute(uint256 contractId, DisputeDecision decision) external onlyArbitrator(contractId) {
-        Contract storage _contract = contracts[contractId];
-        require(_contract.state == State.Disputed, "No dispute to resolve");
-        
-        _contract.state = State.Resolved;
-        _contract.disputeDecision = decision;
+    function submitArbitration(bytes32 attestationUID) external onlyArbitrators {
+        require(inDispute, "Contract is not in dispute");
+        require(arbitratorAttestations[msg.sender] == 0, "Arbitrator has already submitted attestation");
+        arbitratorAttestations[msg.sender] = attestationUID;
+    }
 
-        if (decision == DisputeDecision.ClientWins) {
-            payable(_contract.client).transfer(_contract.amount);
-        } else if (decision == DisputeDecision.FreelancerWins) {
-            payable(_contract.freelancer).transfer(_contract.amount);
+    function resolveDispute(bool inFavorOfClient) external onlyArbitrators {
+        require(inDispute, "Contract is not in dispute");
+
+        uint256 attestationCount = 0;
+        for (uint256 i = 0; i < arbitrators.length; i++) {
+            if (arbitratorAttestations[arbitrators[i]] != 0) {
+                attestationCount++;
+            }
         }
 
-        emit DisputeResolved(contractId, decision);
+        require(attestationCount >= (arbitratorCount / 2), "Not enough attestations");
+
+        inDispute = false;
+
+        if (inFavorOfClient) {
+            payable(client).transfer(amount);
+            emit DisputeResolved("Resolved in favor of client");
+        } else {
+            payable(freelancer).transfer(amount);
+            emit DisputeResolved("Resolved in favor of freelancer");
+        }
+    }
+}
+
+contract FreelanceContractFactory {
+    event ContractDeployed(address contractAddress);
+
+    function createContract(
+        address freelancer,
+        uint256 amount,
+        string memory terms,
+        uint256 deadline,
+        address[] memory arbitrators
+    ) external payable {
+        require(msg.value == amount, "Insufficient amount sent");
+
+        FreelanceContract newContract = (new FreelanceContract){value: msg.value}(
+            msg.sender,
+            freelancer,
+            amount,
+            terms,
+            deadline,
+            arbitrators
+        );
+        emit ContractDeployed(address(newContract));
     }
 }
