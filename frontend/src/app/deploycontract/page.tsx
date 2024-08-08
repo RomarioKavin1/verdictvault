@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import {
   useSendUserOperation,
@@ -84,6 +84,34 @@ const MyComponent = () => {
     }
   };
 
+  // Set up provider and listen for ContractDeployed event
+  useEffect(() => {
+    const setupProvider = async () => {
+      if (window.ethereum) {
+        const ethersProvider = new ethers.BrowserProvider(window.ethereum);
+        const factoryContract = new ethers.Contract(
+          factoryContractAddress,
+          factoryabi,
+          ethersProvider
+        );
+
+        factoryContract.on(
+          "ContractDeployed",
+          (newContract, client, freelancer, amount, terms, deadline) => {
+            // Check if the client and freelancer addresses match the input
+            if (client === clientAddress && freelancer === freelancerAddress) {
+              setCreatedContractAddress(newContract);
+              console.log("Contract Address:", newContract);
+            }
+          }
+        );
+      } else {
+        console.error("No Ethereum provider found");
+      }
+    };
+    setupProvider();
+  }, [clientAddress, freelancerAddress]);
+
   return (
     <div>
       {user ? (
@@ -98,7 +126,7 @@ const MyComponent = () => {
         <label>
           Freelancer Address
           <input
-            className="  text-black"
+            className="text-black"
             type="text"
             value={freelancerAddress}
             onChange={(e) => setFreelancerAddress(e.target.value)}
@@ -110,7 +138,7 @@ const MyComponent = () => {
         <label>
           Client Address
           <input
-            className="  text-black"
+            className="text-black"
             type="text"
             value={clientAddress}
             onChange={(e) => setClientAddress(e.target.value)}
@@ -122,7 +150,7 @@ const MyComponent = () => {
         <label>
           Amount (ETH)
           <input
-            className="  text-black"
+            className="text-black"
             type="text"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -134,7 +162,7 @@ const MyComponent = () => {
         <label>
           Contract Terms
           <input
-            className="  text-black"
+            className="text-black"
             type="text"
             value={terms}
             onChange={(e) => setTerms(e.target.value)}
@@ -146,7 +174,7 @@ const MyComponent = () => {
         <label>
           Deadline (Unix Timestamp)
           <input
-            className="  text-black"
+            className="text-black"
             type="number"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
