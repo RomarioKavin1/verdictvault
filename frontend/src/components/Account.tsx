@@ -27,6 +27,41 @@ const Account = () => {
     ? `${user.address.slice(0, 10)}...`
     : "anon";
 
+  const namesArray = [
+    "Garfield",
+    "Baby",
+    "Callie",
+    "Mittens",
+    "Bear",
+    "Abby",
+    "Cuddles",
+    "George",
+    "Casper",
+    "Jack",
+    "Missy",
+    "Spooky",
+    "Cali",
+    "Miss kitty",
+    "Mimi",
+    "Bandit",
+    "Gizmo",
+    "Toby",
+    "Scooter",
+    "Patches",
+  ];
+  function getRandomImage() {
+    const randomName =
+      namesArray[
+        Math.floor(
+          parseInt(user?.address?.charAt(user?.address.length - 1) ?? "0") *
+            namesArray.length
+        )
+      ];
+    const imageUrl = `https://api.dicebear.com/9.x/glass/svg?seed=${encodeURIComponent(
+      randomName
+    )}`;
+    return imageUrl;
+  }
   return (
     <div className="relative">
       <button
@@ -36,7 +71,7 @@ const Account = () => {
         <div className="flex flex-col gap-0">
           <div className=" flex gap-2 items-center justify-center">
             <img
-              src="https://api.dicebear.com/9.x/glass/svg"
+              src={getRandomImage()}
               className="h-7 w-7 rounded-full"
               alt="avatar"
             />

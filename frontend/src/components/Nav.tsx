@@ -8,7 +8,7 @@ import Account from "./Account";
 const navigation = [
   { name: "New Listing", href: "/newlisting", imgsrc: "/newlisting.png" },
   { name: "Open Listings", href: "/home", imgsrc: "/openlistings.png" },
-  { name: "Your Listings", href: "/yourpolicies", imgsrc: "/mylistings.png" },
+  { name: "Your Listings", href: "/yourlistings", imgsrc: "/mylistings.png" },
 ];
 
 export default function Nav({ selected }: { selected: number }) {
