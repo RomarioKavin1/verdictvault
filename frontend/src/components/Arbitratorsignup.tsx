@@ -4,7 +4,6 @@ import React, { useState } from "react";
 const ArbitratorSignup = () => {
   const [email, setEmail] = useState("");
   const [specialty, setSpecialty] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const handleSubmit = () => {
     console.log(email, specialty);
