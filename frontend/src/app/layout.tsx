@@ -5,12 +5,14 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "./providers";
+import { Source_Code_Pro } from "next/font/google";
+const sourcecodepro = Source_Code_Pro({ subsets: ["latin"] });
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Embedded Accounts UI Components Quickstart NextJs Template",
-  description: "Embedded Accounts UI Components Quickstart NextJs Template",
+  title: "VerdictVault",
+  description: "VerdictVault",
 };
 
 export default function RootLayout({
@@ -26,7 +28,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={sourcecodepro.className}>
         <Providers initialState={initialState}>{children}</Providers>
       </body>
     </html>
