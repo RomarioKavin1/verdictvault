@@ -86,7 +86,7 @@ const FreelanceContractPage = () => {
 
   return (
     <div className="bg-white min-h-screen">
-      <Nav selected={0} />
+      <Nav selected={2} />
       <div className="flex flex-col text-black pt-10 px-56 items-center justify-center">
         <div className="flex items-center justify-center font-bold text-4xl border-b-2 pb-3">
           <p>Freelance Contract Details</p>
@@ -139,12 +139,31 @@ const FreelanceContractPage = () => {
                   user?.address === contract.freelancer) &&
                   (contractState === "Under Progress 🟨" ||
                     contractState === "Ongoing 🟦") && (
-                    <button
-                      className="rounded-md mt-2 bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      onClick={raiseDispute}
-                    >
-                      Raise Dispute
-                    </button>
+                    <>
+                      <div className=" mt-4">
+                        <label
+                          htmlFor="contract-terms"
+                          className="block text-lg font-bold leading-6 text-gray-900"
+                        >
+                          Enter Reason for Dispute/Evidence :
+                        </label>
+                        <div className="mt-2">
+                          <textarea
+                            id="contract-terms"
+                            rows={4}
+                            // value={terms}
+                            // onChange={(e) => setTerms(e.target.value)}
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        className="rounded-md mt-2 bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={raiseDispute}
+                      >
+                        Raise Dispute
+                      </button>
+                    </>
                   )}
                 {contractState === "Disputed" &&
                   contract.isArbitrator(user?.address) && (

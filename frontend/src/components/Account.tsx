@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLogout, useUser } from "@account-kit/react";
+import { useRouter } from "next/navigation";
 
 const Account = () => {
   const user = useUser();
@@ -62,6 +63,7 @@ const Account = () => {
     )}`;
     return imageUrl;
   }
+  const router = useRouter();
   return (
     <div className="relative">
       <button
@@ -92,6 +94,13 @@ const Account = () => {
           {/* <div className="px-4 py-2 text-sm text-black">
             {user?.address ?? "anon"}
           </div> */}
+          <button
+            className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-red-100"
+            onClick={() => router.push("/arbitrator")}
+          >
+            Signup as an Arbitrator
+          </button>
+
           <button
             className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-red-100"
             onClick={() => logout()}
