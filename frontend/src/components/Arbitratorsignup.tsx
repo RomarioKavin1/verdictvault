@@ -1,21 +1,39 @@
+import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import React, { useState } from "react";
 
 const ArbitratorSignup = () => {
   const [email, setEmail] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [success, setSuccess] = useState(false);
   const handleSubmit = () => {
-    setLoading(true);
-    // Add logic for Worldcoin verification
+    console.log(email, specialty);
+  };
+  const [worldcoinVerified, setWorldcoinVerified] = useState(false);
+  const verifyProof = async (proof: any) => {
+    const response = await fetch("/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ proof }),
+    });
+    if (!response.ok) {
+      throw new Error(`Error verifying Worldcoin: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    setWorldcoinVerified(data.verified);
   };
 
+  const onSuccess = () => {
+    console.log("Success");
+    setSuccess(true);
+  };
   return (
     <div className="flex items-center justify-center">
       <div className="grid grid-cols-1 justify-center items-center">
         <div className="bg-white shadow-sm ring-2 ring-slate-300 sm:rounded-xl">
           <div className="px-4 py-4 sm:p-2">
-            {!loading && (
+            {!success && (
               <div className="grid max-w-2xl grid-cols-1 m-8">
                 <div className="sm:col-span-5">
                   <label
@@ -61,20 +79,31 @@ const ArbitratorSignup = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-x-6 border-gray-900/10 px-4 py-4 sm:px-8 mt-8">
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="rounded-md bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  <IDKitWidget
+                    app_id="app_staging_ffbf822be6fe4f13048a3c64cf371ead"
+                    action="arbitrator"
+                    false
+                    verification_level={VerificationLevel.Device}
+                    handleVerify={verifyProof}
+                    onSuccess={onSuccess}
+                    action_description="Sign up as an arbitrator"
                   >
-                    Proceed with Worldcoin Verification
-                  </button>
+                    {({ open }) => (
+                      <div
+                        onClick={open}
+                        type="button"
+                        className="rounded-md bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Proceed with Worldcoin Verification
+                      </div>
+                    )}
+                  </IDKitWidget>
                 </div>
               </div>
             )}
-            {loading && (
+            {success && (
               <div>
-                {/* Replace with a proper loading spinner */}
-                <p>Loading...</p>
+                <p>Successfully Registered as Arbitrator ✅</p>
               </div>
             )}
           </div>

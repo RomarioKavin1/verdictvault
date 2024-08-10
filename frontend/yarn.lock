@@ -3794,25 +3794,25 @@
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
 
-"@worldcoin/idkit-core@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@worldcoin/idkit-core/-/idkit-core-1.2.2.tgz#d6f885fb712e0c70b74cb85fe9a55109e1bc7af1"
-  integrity sha512-zc+DG1iZrQZ1LI1B3b+skb9K4TvvI55KDxWcKzdL83N8Xr1PNZ9icOWrwndufpp6IbEz+BNJFZV0hVf/KS2Zgg==
+"@worldcoin/idkit-core@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@worldcoin/idkit-core/-/idkit-core-1.3.0.tgz#02aa3410ce88006c6c7780159fc932cfc8b95323"
+  integrity sha512-HAgaZl8rmKq5aKeNAOXIbvhDwtpxTM4Wsy8F26LH1vMBgTe3tx/wHXmV7jsNl1p2k8XRhGmrAdqeRVK5QPhBfg==
   dependencies:
     browser-or-node "3.0.0-pre.0"
     buffer "^6.0.3"
     viem "^2.17.0"
     zustand "^4.5"
 
-"@worldcoin/idkit@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@worldcoin/idkit/-/idkit-1.2.2.tgz#ea19f12ac55198adf017e6f0ea8520d35d6ac1c1"
-  integrity sha512-Mh3nobLQ8M70qesoaMNHkrnJkutZavbghzwvzmvoj/aK5tIUbjaJ8eVcJlSd98eDgUWRPycMCj5aTNHUwPSD6A==
+"@worldcoin/idkit@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@worldcoin/idkit/-/idkit-1.3.0.tgz#a1f958188ae4c0e262fd534862587639324c6845"
+  integrity sha512-9fMWzMcNsCqrvofQOqSOv4IMpwCbN9YyrGWF9z9m7D1BhLud4VLHfEdRW2lX9f1iIEaXvLKzH2A+4We3w4EPwg==
   dependencies:
     "@radix-ui/react-dialog" "^1.1.1"
     "@radix-ui/react-toast" "^1.2.1"
     "@tailwindcss/forms" "^0.5.7"
-    "@worldcoin/idkit-core" "1.2.2"
+    "@worldcoin/idkit-core" "1.3.0"
     copy-to-clipboard "^3.3.3"
     framer-motion "^11.2.14"
     qrcode "^1.5.3"
