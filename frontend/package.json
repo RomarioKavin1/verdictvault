@@ -13,6 +13,8 @@
     "@account-kit/infra": "^4.0.0-alpha.7",
     "@account-kit/react": "^4.0.0-alpha.7",
     "@ethereum-attestation-service/eas-sdk": "^2.5.0",
+    "@headlessui/react": "^2.1.2",
+    "@heroicons/react": "^2.1.5",
     "@tanstack/react-query": "^5.51.21",
     "@worldcoin/idkit": "^1.2.2",
     "ethers": "^6.13.2",
