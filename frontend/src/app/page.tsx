@@ -36,9 +36,7 @@ export default function Home() {
               fairness—all on the blockchain. No middlemen, no bias, just pure,
               community-driven adjudication.
             </p>
-            <Link href="/login">
-              <Button text="Launch app" />
-            </Link>
+            <Button text="Launch app" link="/login" />
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-white sm:h-32" />

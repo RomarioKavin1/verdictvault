@@ -6,9 +6,9 @@ import Account from "./Account";
 // import { ConnectKitButton } from "connectkit";
 
 const navigation = [
-  { name: "New Listing", href: "/newlisting", imgsrc: "/diamond.svg" },
-  { name: "Open Listings", href: "/home", imgsrc: "/block.svg" },
-  { name: "Your Listings", href: "/yourpolicies", imgsrc: "/lshap.svg" },
+  { name: "New Listing", href: "/newlisting", imgsrc: "/newlisting.png" },
+  { name: "Open Listings", href: "/home", imgsrc: "/openlistings.png" },
+  { name: "Your Listings", href: "/yourpolicies", imgsrc: "/mylistings.png" },
 ];
 
 export default function Nav({ selected }: { selected: number }) {
@@ -22,8 +22,8 @@ export default function Nav({ selected }: { selected: number }) {
       >
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
-            <span className="sr-only">WeatherProof</span>
-            <img className="h-8 w-auto" src="/sun.svg" alt="" />
+            <span className="sr-only text-black">VerdictVault</span>
+            <img className="h-16 w-auto" src="/judiciary.svg" alt="" />
           </a>
         </div>
         <div className="flex lg:hidden">

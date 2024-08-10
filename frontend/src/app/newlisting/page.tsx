@@ -10,7 +10,9 @@ function page() {
         <div className="flex items-center justify-center font-bold text-6xl border-b-2 pb-3">
           <p>Create New Listing</p>
         </div>
-        <Createcontract />
+        <div className="m-5">
+          <Createcontract />
+        </div>
       </div>
     </div>
   );

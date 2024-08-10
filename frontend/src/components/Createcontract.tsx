@@ -121,7 +121,7 @@ const Createcontract = () => {
   return (
     <div className="flex items-center justify-center">
       <div className="grid grid-cols-1 justify-center items-center">
-        <div className="bg-white shadow-sm ring-1 ring-black sm:rounded-xl">
+        <div className="bg-white shadow-sm ring-2 ring-slate-300 sm:rounded-xl">
           <div className="px-4 py-4 sm:p-2">
             {!loading && (
               <div className="grid max-w-2xl grid-cols-1 m-8">
