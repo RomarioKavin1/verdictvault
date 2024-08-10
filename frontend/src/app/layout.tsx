@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Source_Code_Pro } from "next/font/google";
-const sourcecodepro = Source_Code_Pro({ subsets: ["latin"] });
+import { Source_Code_Pro, Plus_Jakarta_Sans } from "next/font/google";
+const sourcecodepro = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 const inter = Inter({ subsets: ["latin"] });
 
