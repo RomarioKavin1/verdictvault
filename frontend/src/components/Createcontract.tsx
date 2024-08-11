@@ -9,6 +9,7 @@ import {
 import { factoryabi } from "@/utils/abi";
 import Button from "./Button";
 import Spinner from "./Spinner";
+import Link from "next/link";
 const factoryContractAddress = "0xD88981680A1a08456638dc12F35D382142e0ce5c";
 
 const Createcontract = () => {
@@ -270,7 +271,12 @@ const Createcontract = () => {
               </div>
             )}
             {createdContractAddress && (
-              <p>Deployed Contract Address: {createdContractAddress}</p>
+              <Link
+                href={`https://base-sepolia.blockscout.com/address/${createdContractAddress}?tab=contract`}
+                target="_blank"
+              >
+                <p>Deployed Contract Address: {createdContractAddress}</p>
+              </Link>
             )}
           </div>
         </div>
