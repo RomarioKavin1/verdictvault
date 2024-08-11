@@ -1,6 +1,5 @@
 # VerdictVault
 
-Verdict Vault is a decentralized platform that manages contracts and resolves disputes between clients and freelancers.
 Verdict Vault is an innovative decentralized judiciary platform that leverages blockchain technology to redefine how contracts and disputes are managed in the freelance and gig economy. By utilizing smart contracts on the Ethereum network, Verdict Vault ensures that agreements between clients and freelancers are securely enforced, transparent, and resistant to manipulation.
 
 Key Features: Automated Contract Creation and Execution: Verdict Vault allows clients to create and deploy smart contracts that clearly outline the terms of a project, including the amount of payment, deadlines, and specific conditions for completion. Once the contract is deployed, the agreed-upon funds are securely held in escrow by the smart contract, ensuring that the freelancer is paid only upon successful completion of the work.
@@ -28,6 +27,7 @@ Pyth Network for Entropy To ensure fairness and randomness in the arbitration pr
 Alchemy Account Kit for onboarding Alchemy Kit is used within Verdict Vault to facilitate embedded account onboarding. It provides the necessary tools for executing operations within the dApp.
 
 Arbitrator Testing with Worldcoin Worldcoin is utilized within Verdict Vault specifically for testing arbitrators. This ensures that the arbitrators are uniquely identified and verified, maintaining the integrity of the arbitration process.
+
 **Deployments:**
 
 > Base Sepolia
