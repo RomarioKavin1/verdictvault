@@ -1,19 +1,38 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { useUser } from "@account-kit/react";
 import { freelanceContractABI } from "@/utils/abi";
 import Nav from "@/components/Nav";
-
+import {
+  useSendUserOperation,
+  useSmartAccountClient,
+  useUser,
+} from "@account-kit/react";
 const FreelanceContractPage = () => {
   const user = useUser();
-  const contractAddress = "0x072A5f0b0e0afba093542108Df4E5A5D9Cf20654";
+  const contractAddress = "0xfFB0781ea255dAaE63A74ee8C1D7876cb5D619DE";
   const [contract, setContract] = useState<any>(null);
   const [contractState, setContractState] = useState<string>("");
-  const [arbitrators, setArbitrators] = useState<string[]>([]);
+  const [arbitrators, setArbitrators] = useState<string[]>([
+    "0x97835b420E882A4844bA7CD08C094150e80d3af5",
+    "0x41c9e39574F40Ad34c79f1C99B66A45eFB830d4c",
+    "0xD88981680A1a08456638dc12F35D382142e0ce5c",
+  ]);
   const [attestationUID, setAttestationUID] = useState<string>("");
   const [inFavorOfClient, setInFavorOfClient] = useState<boolean>(false);
-
+  const { client } = useSmartAccountClient({
+    type: "MultiOwnerModularAccount",
+  });
+  const { sendUserOperation, isSendingUserOperation } = useSendUserOperation({
+    client,
+    waitForTxn: true,
+    onSuccess: ({ hash }: { hash: string }) => {
+      console.log("Transaction hash:", hash);
+    },
+    onError: (error: any) => {
+      console.error("Error sending user operation:", error);
+    },
+  });
   useEffect(() => {
     const fetchContractDetails = async () => {
       if (window.ethereum) {
@@ -55,6 +74,7 @@ const FreelanceContractPage = () => {
 
   const markWorkCompleted = async () => {
     if (contract && user?.address === contract.client) {
+      console.log(contract);
       const tx = await contract.markWorkCompleted();
       await tx.wait();
       setContractState("Resolved");
@@ -67,9 +87,40 @@ const FreelanceContractPage = () => {
       (user?.address === contract.client ||
         user?.address === contract.freelancer)
     ) {
-      const tx = await contract.raiseDispute(arbitrators);
-      await tx.wait();
-      setContractState("Disputed");
+      try {
+        // Create an instance of the contract interface
+        const contractInterface = new ethers.Interface(freelanceContractABI);
+
+        // Encode the function call
+        const data = contractInterface.encodeFunctionData("raiseDispute", [
+          arbitrators,
+        ]);
+
+        // Prepare the transaction
+        const tx = {
+          to: contractAddress,
+          data,
+          value: 0, // Assuming no ETH is required for raising a dispute
+        };
+
+        console.log("Transaction Data:", tx);
+
+        // Send the transaction as a UserOperation
+        const userOperation = {
+          uo: {
+            target: contractAddress,
+            data,
+            value: 0,
+          },
+        };
+
+        await sendUserOperation(userOperation);
+
+        // Update the contract state
+        setContractState("Disputed 🟥");
+      } catch (error) {
+        console.error("Error raising dispute:", error);
+      }
     }
   };
 

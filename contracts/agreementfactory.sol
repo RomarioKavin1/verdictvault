@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.21;
 import "./Freelance.sol";
+
 contract ContractFactory {
     address public owner;
 
@@ -15,7 +16,8 @@ contract ContractFactory {
         address _client,
         uint256 _amount,
         string memory _terms,
-        uint256 _deadline
+        uint256 _deadline,
+        address _entropyAddress
     ) external payable {
         require(msg.sender == _client, "Only the client can deploy the contract.");
         require(msg.value == _amount, "Escrow amount must be sent with the deployment.");
@@ -25,7 +27,8 @@ contract ContractFactory {
             _client,
             _amount,
             _terms,
-            _deadline
+            _deadline,
+            _entropyAddress
         );
 
         emit ContractDeployed(address(newContract), _client, _freelancer, _amount, _terms, _deadline);

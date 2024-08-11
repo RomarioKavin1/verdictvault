@@ -1,19 +1,113 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { ethers, JsonRpcSigner } from "ethers";
 import { useUser } from "@account-kit/react";
 import { freelanceContractABI } from "@/utils/abi";
 import Nav from "@/components/Nav";
+import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
+import {
+  useSendUserOperation,
+  useSmartAccountClient,
+} from "@account-kit/react";
+const easContractAddress = "0x4200000000000000000000000000000000000021";
+const schemaUID =
+  "0xd3e7fa7f3e2c8a675ab63b531a27d81ba7668bc63a04b6f71e3c6a4786745160";
 
 const FreelanceContractPage = () => {
   const user = useUser();
-  const contractAddress = "0x072A5f0b0e0afba093542108Df4E5A5D9Cf20654";
+  const contractAddress = "0xfFB0781ea255dAaE63A74ee8C1D7876cb5D619DE";
   const [contract, setContract] = useState<any>(null);
   const [contractState, setContractState] = useState<string>("");
   const [arbitrators, setArbitrators] = useState<string[]>([]);
   const [reason, setAttestationReason] = useState<string>("");
   const [inFavorOfClient, setInFavorOfClient] = useState<boolean>(false);
+  const { client } = useSmartAccountClient({
+    type: "MultiOwnerModularAccount",
+  });
+  const [attestationUID, setAttestationUID] = useState<string | null>(null);
+  const [signer, setSigner] = useState<JsonRpcSigner | undefined>();
+  const { sendUserOperation, isSendingUserOperation } = useSendUserOperation({
+    client,
+    waitForTxn: true,
+    onSuccess: ({ hash, request }) => {
+      console.log("Transaction hash:", hash);
+      console.log("User operation request:", request);
+    },
+    onError: (error) => {
+      console.error("Error sending user operation:", error);
+    },
+  });
 
+  useEffect(() => {
+    const setupSigner = async () => {
+      if (window.ethereum) {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        setSigner(signer);
+      } else {
+        console.error("No Ethereum provider found");
+      }
+    };
+    setupSigner();
+  }, []);
+
+  const handleAttest = async () => {
+    try {
+      if (!signer) {
+        throw new Error("Signer not initialized");
+      }
+
+      const eas = new EAS(easContractAddress);
+      await eas.connect(signer);
+
+      const schemaEncoder = new SchemaEncoder(
+        "uint8 Client,uint8 FreeLancer,address ContractAddress,string Comments"
+      );
+      const encodedData = schemaEncoder.encodeData([
+        { name: "Client", value: `${attestationAmount}`, type: "uint8" },
+        {
+          name: "FreeLancer",
+          value: `${100 - attestationAmount}`,
+          type: "uint8",
+        },
+        {
+          name: "ContractAddress",
+          value: `${contractAddress}`,
+          type: "address",
+        },
+        { name: "Comments", value: `${reason}`, type: "string" },
+      ]);
+
+      console.log("Encoded Data:", encodedData);
+
+      const tx = await eas.attest({
+        schema: schemaUID,
+        data: {
+          recipient: "0x0000000000000000000000000000000000000000",
+          expirationTime: BigInt(0),
+          revocable: false,
+          data: encodedData,
+        },
+      });
+
+      console.log("Transaction sent:", tx);
+
+      const newAttestationUID = await tx.wait();
+      setAttestationUID(newAttestationUID);
+      console.log("New attestation UID:", newAttestationUID);
+
+      return {
+        uo: {
+          target: easContractAddress,
+          data: tx.data,
+          value: 0n,
+        },
+      };
+    } catch (error) {
+      console.error("Error during attestation:", error);
+    }
+  };
   useEffect(() => {
     const fetchContractDetails = async () => {
       if (window.ethereum) {
@@ -41,16 +135,7 @@ const FreelanceContractPage = () => {
   }, [contractAddress]);
   const [attestationAmount, setAttestationAmount] = useState(50); // Default to 50%
   const getReadableState = (state: number) => {
-    switch (state) {
-      case 0:
-        return "Ongoing 🟦";
-      case 1:
-        return "Disputed 🟥";
-      case 2:
-        return "Resolved 🟩";
-      default:
-        return "Under Progress 🟨";
-    }
+    return "Disputed 🟥";
   };
 
   const markWorkCompleted = async () => {
@@ -74,7 +159,7 @@ const FreelanceContractPage = () => {
   };
 
   const attestToDispute = async () => {
-    if (contract && contract.isArbitrator(user?.address)) {
+    if (contract) {
       const tx = await contract.attestToDispute(
         attestationUID,
         inFavorOfClient
@@ -163,7 +248,7 @@ const FreelanceContractPage = () => {
                   </div>
                   <button
                     className="rounded-md bg-black px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-2"
-                    onClick={attestToDispute}
+                    onClick={handleAttest}
                   >
                     Submit Attestation
                   </button>

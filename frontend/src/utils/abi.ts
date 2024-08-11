@@ -74,6 +74,11 @@ export const factoryabi = [
         name: "_deadline",
         type: "uint256",
       },
+      {
+        internalType: "address",
+        name: "_entropyAddress",
+        type: "address",
+      },
     ],
     name: "deployContract",
     outputs: [],
@@ -95,24 +100,6 @@ export const factoryabi = [
   },
 ];
 export const freelanceContractABI = [
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "attestationUID",
-        type: "bytes32",
-      },
-      {
-        internalType: "bool",
-        name: "inFavorOfClient",
-        type: "bool",
-      },
-    ],
-    name: "attestToDispute",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
   {
     inputs: [
       {
@@ -140,9 +127,33 @@ export const freelanceContractABI = [
         name: "_deadline",
         type: "uint256",
       },
+      {
+        internalType: "address",
+        name: "_entropyAddress",
+        type: "address",
+      },
     ],
     stateMutability: "payable",
     type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "arbitrator1",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "arbitrator2",
+        type: "address",
+      },
+    ],
+    name: "ArbitratorsSelected",
+    type: "event",
   },
   {
     anonymous: false,
@@ -177,26 +188,6 @@ export const freelanceContractABI = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "markWorkCompleted",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address[]",
-        name: "_arbitrators",
-        type: "address[]",
-      },
-    ],
-    name: "raiseDispute",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -208,6 +199,29 @@ export const freelanceContractABI = [
     ],
     name: "WorkCompleted",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "sequence",
+        type: "uint64",
+      },
+      {
+        internalType: "address",
+        name: "provider",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "randomNumber",
+        type: "bytes32",
+      },
+    ],
+    name: "_entropyCallback",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
@@ -228,6 +242,11 @@ export const freelanceContractABI = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     name: "arbitratorAttestations",
@@ -258,6 +277,24 @@ export const freelanceContractABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "attestationUID",
+        type: "bytes32",
+      },
+      {
+        internalType: "bool",
+        name: "inFavorOfClient",
+        type: "bool",
+      },
+    ],
+    name: "attestToDispute",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -342,6 +379,26 @@ export const freelanceContractABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "markWorkCompleted",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "potentialArbitrators",
+        type: "address[]",
+      },
+    ],
+    name: "raiseDispute",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

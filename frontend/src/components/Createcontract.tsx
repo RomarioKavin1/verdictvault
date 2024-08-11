@@ -8,9 +8,8 @@ import {
 } from "@account-kit/react";
 import { factoryabi } from "@/utils/abi";
 import Button from "./Button";
-import Link from "next/link";
 import Spinner from "./Spinner";
-const factoryContractAddress = "0x73a9b390e02e842879Da557b801fF4135d194307";
+const factoryContractAddress = "0xD88981680A1a08456638dc12F35D382142e0ce5c";
 
 const Createcontract = () => {
   const { client } = useSmartAccountClient({
@@ -65,6 +64,7 @@ const Createcontract = () => {
         amountInWei,
         terms,
         deadlineTimestamp,
+        "0x41c9e39574F40Ad34c79f1C99B66A45eFB830d4c",
       ]);
 
       // Prepare the transaction
