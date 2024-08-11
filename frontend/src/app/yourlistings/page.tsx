@@ -10,7 +10,7 @@ import {
 } from "@account-kit/react";
 const FreelanceContractPage = () => {
   const user = useUser();
-  const contractAddress = "0xfFB0781ea255dAaE63A74ee8C1D7876cb5D619DE";
+  const contractAddress = "0x863Ad2F812314ce94bfb269225F7219Af0719ee0";
   const [contract, setContract] = useState<any>(null);
   const [contractState, setContractState] = useState<string>("");
   const [arbitrators, setArbitrators] = useState<string[]>([

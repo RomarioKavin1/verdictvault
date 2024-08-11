@@ -154,4 +154,3 @@ contract FreelanceContract is IEntropyConsumer {
         emit ArbitratorsSelected(selectedArbitrator1, selectedArbitrator2);
     }
 }
-

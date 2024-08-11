@@ -10,7 +10,7 @@ import { factoryabi } from "@/utils/abi";
 import Button from "./Button";
 import Spinner from "./Spinner";
 import Link from "next/link";
-const factoryContractAddress = "0xD88981680A1a08456638dc12F35D382142e0ce5c";
+const factoryContractAddress = "0x0381C2C3C1F486189d3DE0b72529938F8E05478d";
 
 const Createcontract = () => {
   const { client } = useSmartAccountClient({
